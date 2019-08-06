@@ -1,19 +1,20 @@
 package main
 
 import (
+	"github.com/Mahanmmi/Go-Remote-Calculator/calculator"
+	"github.com/bobesa/chalk"
 	"bufio"
 	"encoding/gob"
 	"fmt"
 	"net"
 	"os"
 	"strconv"
-	"../../calculator"
 )
 
 // InitializeNewClient :|
 func InitializeNewClient() {
 	client, _ := net.Dial("tcp", "127.0.0.1:18757")
-	
+
 	// read in input from stdin
 	reader := bufio.NewReader(os.Stdin)
 	fmt.Print("Enter Operation: (sum, subtract, multiply, divide): ")
@@ -23,16 +24,10 @@ func InitializeNewClient() {
 	fmt.Print("Enter second number: ")
 	strNumber2, _ := reader.ReadString('\n')
 
-	// fmt.Println("s " + strNumber1 + " f")
-	// fmt.Println("s " + strNumber2 + " f")
-
+	// Converting input string to numbers
 	number1, _ := strconv.ParseFloat(strNumber1[:len(strNumber1)-2], 64)
 	number2, _ := strconv.ParseFloat(strNumber2[:len(strNumber2)-2], 64)
 
-	// fmt.Println("s" , number1 , "f")
-	// fmt.Println("s" , number2 , "f")
-		
-		
 	// encode and send data
 	data := calculator.ArithmaticOperation{operation, number1, number2}
 	encoder := gob.NewEncoder(client)
@@ -42,5 +37,6 @@ func InitializeNewClient() {
 
 	// listen for reply
 	message, _ := bufio.NewReader(client).ReadString('\n')
-	fmt.Print("Answer from server: " + message)
+	
+	chalk.GreenBackground().Bold().Black().Print("Answer from server: " + message)
 }

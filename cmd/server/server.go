@@ -1,8 +1,9 @@
 package main
 
 import (
-	"../../calculator"
+	"github.com/Mahanmmi/Go-Remote-Calculator/calculator"
 	"encoding/gob"
+	"github.com/bobesa/chalk"
 	"fmt"
 	"net"
 	"strconv"
@@ -12,7 +13,7 @@ func clientHandler(clientSocket net.Conn) {
 	dec := gob.NewDecoder(clientSocket)
 	ao := &calculator.ArithmaticOperation{}
 	dec.Decode(ao)
-	fmt.Printf("Received : %+v\n", ao)
+	chalk.Green().Bold().WhiteBackground().Printf("Received : %+v\n", ao)
 
 	var ans float64
 	switch ao.OperationType[:len(ao.OperationType)-2] {
