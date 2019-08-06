@@ -7,13 +7,8 @@ import (
 	"net"
 	"os"
 	"strconv"
+	"../../calculator"
 )
-
-// ArithmaticOperation struct
-type ArithmaticOperation struct {
-	OperationType string
-	A, B          float64
-}
 
 // InitializeNewClient :|
 func InitializeNewClient() {
@@ -39,7 +34,7 @@ func InitializeNewClient() {
 		
 		
 	// encode and send data
-	data := ArithmaticOperation{operation, number1, number2}
+	data := calculator.ArithmaticOperation{operation, number1, number2}
 	encoder := gob.NewEncoder(client)
 	if err := encoder.Encode(data); err != nil {
 		panic(err)

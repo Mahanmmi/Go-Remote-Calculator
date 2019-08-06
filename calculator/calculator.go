@@ -1,5 +1,11 @@
 package calculator
 
+// ArithmaticOperation struct
+type ArithmaticOperation struct {
+	OperationType string
+	A, B          float64
+}
+
 // Sum of a and b
 func Sum(a float64, b float64) float64 {
 	return a + b

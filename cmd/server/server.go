@@ -1,7 +1,6 @@
 package main
 
 import (
-	// "bufio"
 	"../../calculator"
 	"encoding/gob"
 	"fmt"
@@ -9,35 +8,29 @@ import (
 	"strconv"
 )
 
-// ArithmaticOperation struct
-type ArithmaticOperation struct {
-	OperationType string
-	A, B          float64
-}
-
 func clientHandler(clientSocket net.Conn) {
 	dec := gob.NewDecoder(clientSocket)
-	p := &ArithmaticOperation{}
-	dec.Decode(p)
-	fmt.Printf("Received : %+v", p)
+	ao := &calculator.ArithmaticOperation{}
+	dec.Decode(ao)
+	fmt.Printf("Received : %+v\n", ao)
 
 	var ans float64
-	switch p.OperationType[:len(p.OperationType)-2] {
+	switch ao.OperationType[:len(ao.OperationType)-2] {
 	case "sum":
 		{
-			ans = calculator.Sum(p.A, p.B)
+			ans = calculator.Sum(ao.A, ao.B)
 		}
 	case "subtract":
 		{
-			ans = calculator.Subtract(p.A, p.B)
+			ans = calculator.Subtract(ao.A, ao.B)
 		}
 	case "multiply":
 		{
-			ans = calculator.Multiply(p.A, p.B)
+			ans = calculator.Multiply(ao.A, ao.B)
 		}
 	case "divide":
 		{
-			ans = calculator.Divide(p.A, p.B)
+			ans = calculator.Divide(ao.A, ao.B)
 		}
 	}
 	strAns := strconv.FormatFloat(ans, 'f', 2, 64)
