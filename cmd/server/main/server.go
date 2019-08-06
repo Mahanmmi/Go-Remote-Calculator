@@ -1,24 +1,48 @@
 package main
 
 import (
-	"bufio"
+	// "bufio"
+	"../../calculator"
+	"encoding/gob"
 	"fmt"
 	"net"
-	"strings"
+	"strconv"
 )
 
-func clientHandler(clientSocket net.Conn) {
+// ArithmaticOperation struct
+type ArithmaticOperation struct {
+	OperationType string
+	A, B          float64
+}
 
-	for {
-		// will listen for message to process ending in newline (\n)
-		message, _ := bufio.NewReader(clientSocket).ReadString('\n')
-		// output message received
-		fmt.Print("Message Received:", string(message))
-		// sample process for string received
-		newmessage := strings.ToUpper(message)
-		// send new string back to client
-		clientSocket.Write([]byte(newmessage + "\n"))
+func clientHandler(clientSocket net.Conn) {
+	dec := gob.NewDecoder(clientSocket)
+	p := &ArithmaticOperation{}
+	dec.Decode(p)
+	fmt.Printf("Received : %+v", p)
+
+	var ans float64
+	switch p.OperationType[:len(p.OperationType)-2] {
+	case "sum":
+		{
+			ans = calculator.Sum(p.A, p.B)
+		}
+	case "subtract":
+		{
+			ans = calculator.Subtract(p.A, p.B)
+		}
+	case "multiply":
+		{
+			ans = calculator.Multiply(p.A, p.B)
+		}
+	case "divide":
+		{
+			ans = calculator.Divide(p.A, p.B)
+		}
 	}
+	strAns := strconv.FormatFloat(ans, 'f', 2, 64)
+	clientSocket.Write([]byte(strAns + "\n"))
+	clientSocket.Close()
 }
 
 // InitializeServer TCP on port 18757
