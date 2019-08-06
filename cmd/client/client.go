@@ -1,18 +1,18 @@
 package main
 
 import (
-	"github.com/Mahanmmi/Go-Remote-Calculator/calculator"
-	"github.com/bobesa/chalk"
 	"bufio"
 	"encoding/gob"
 	"fmt"
+	"github.com/Mahanmmi/Go-Remote-Calculator/calculator"
+	"github.com/bobesa/chalk"
 	"net"
 	"os"
 	"strconv"
 )
 
-// InitializeNewClient :|
-func InitializeNewClient() {
+// NewClient :|
+func NewClient() {
 	client, _ := net.Dial("tcp", "127.0.0.1:18757")
 
 	// read in input from stdin
@@ -37,6 +37,6 @@ func InitializeNewClient() {
 
 	// listen for reply
 	message, _ := bufio.NewReader(client).ReadString('\n')
-	
+
 	chalk.GreenBackground().Bold().Black().Print("Answer from server: " + message)
 }
