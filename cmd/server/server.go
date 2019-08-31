@@ -1,22 +1,17 @@
 package main
 
 import (
-	"github.com/Mahanmmi/Go-Remote-Calculator/calculator"
-	"encoding/gob"
-	"github.com/bobesa/chalk"
 	"fmt"
-	"net"
+	"net/http"
 	"strconv"
+
+	"github.com/Mahanmmi/Go-Remote-Calculator/calculator"
+	"github.com/labstack/echo"
 )
 
-func clientHandler(clientSocket net.Conn) {
-	dec := gob.NewDecoder(clientSocket)
-	ao := &calculator.ArithmaticOperation{}
-	dec.Decode(ao)
-	chalk.Green().Bold().WhiteBackground().Printf("Received : %+v\n", ao)
-
+func clientHandler(ao calculator.ArithmaticOperation) string {
 	var ans float64
-	switch ao.OperationType[:len(ao.OperationType)-2] {
+	switch ao.OperationType {
 	case "sum":
 		{
 			ans = calculator.Sum(ao.A, ao.B)
@@ -35,16 +30,28 @@ func clientHandler(clientSocket net.Conn) {
 		}
 	}
 	strAns := strconv.FormatFloat(ans, 'f', 2, 64)
-	clientSocket.Write([]byte(strAns + "\n"))
-	clientSocket.Close()
+	return strAns
+}
+
+func handler(c echo.Context) error {
+	params := c.QueryParams()
+	A, _ := strconv.ParseFloat(params["A"][0], 64)
+	B, _ := strconv.ParseFloat(params["B"][0], 64)
+	oper := calculator.ArithmaticOperation{
+		params["type"][0],
+		A,
+		B,
+	}
+
+	fmt.Println(oper)
+
+	return c.JSON(http.StatusOK, clientHandler(oper))
 }
 
 // InitializeServer TCP on port 18757
 func InitializeServer() {
-	fmt.Println("Server Hello")
-	serverSocket, _ := net.Listen("tcp", "127.0.0.1:18757")
-	for {
-		client, _ := serverSocket.Accept()
-		go clientHandler(client)
-	}
+	e := echo.New()
+	e.GET("/calculator", handler)
+	fmt.Println("ere")
+	e.Logger.Fatal(e.Start("127.0.0.1:18757"))
 }
